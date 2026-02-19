@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  # Backend API service
+  backend:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: buslab_backend
+    restart: always
+    environment:
+      - MONGO_URI=${MONGO_URL}
+    env_file:
+      - ./.env
+    volumes:
+      # Mount logs directory to host machine for persistent log storage
+      - ./logs:/app/logs
+      # Mount i18n directory to host machine for persistent i18n storage
+      - ./i18n:/app/i18n:z
+    networks:
+      - buslab_net
+
+volumes:
+  mongodb_data:
+
+networks:
+  buslab_net:
+    driver: bridge

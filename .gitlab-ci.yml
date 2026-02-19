@@ -1,0 +1,4 @@
+# Include the universal template for deployment
+include:
+  - project: 'templates/gitlab-ci'
+    file: '.gitlab-ci-template.yml'
