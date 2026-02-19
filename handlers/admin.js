@@ -5,6 +5,7 @@ const Category = require('../models/category');
 const FAQ = require('../models/faq');
 const { getOrCreateUser, isAdmin } = require('./common');
 const { logAction } = require('../logger');
+const { studentStates } = require('./student');
 
 // Admin state management (in-memory for simplicity)
 const adminStates = new Map();
@@ -1617,6 +1618,117 @@ const handleConfirmDeleteFAQ = async (ctx) => {
   }
 };
 
+/**
+ * Handle /reopen command - reopen any request and send it back to student chat
+ */
+const handleReopenRequest = async (ctx, bot) => {
+  try {
+    // Check if the command is from the admin chat
+    if (ctx.chat.id.toString() !== process.env.ADMIN_CHAT_ID) {
+      await ctx.reply('Эта команда доступна только в администраторском чате.');
+      return;
+    }
+
+    const user = await getOrCreateUser(ctx);
+
+    if (!isAdmin(user)) {
+      await ctx.reply('Эта команда доступна только администраторам.');
+      return;
+    }
+
+    // Get request ID from command arguments
+    const args = ctx.message.text.split(' ');
+    if (args.length < 2) {
+      await ctx.reply('Использование: /reopen <ID обращения>');
+      return;
+    }
+
+    const requestId = args[1].trim();
+
+    const request = await Request.findById(requestId)
+      .populate('userId')
+      .populate('categoryId')
+      .populate('studentId');
+
+    if (!request) {
+      await ctx.reply('Обращение не найдено.');
+      return;
+    }
+
+    // Don't reopen requests that are already pending or approved
+    if (request.status === 'pending' || request.status === 'approved') {
+      await ctx.reply(`Обращение #${request._id} уже в статусе "${request.status}". Нет необходимости возвращать его в работу.`);
+      return;
+    }
+
+    // If request was assigned/answered — clear student assignment and notify
+    if ((request.status === 'assigned' || request.status === 'answered') && request.studentId) {
+      const student = await User.findById(request.studentId._id || request.studentId);
+      if (student && student.currentAssignmentId && student.currentAssignmentId.toString() === request._id.toString()) {
+        student.currentAssignmentId = null;
+        await student.save();
+      }
+      // Clear student in-memory state (writing_answer / confirming_answer)
+      if (student) {
+        studentStates.delete(student.telegramId);
+      }
+
+      // Notify student
+      const studentTelegramId = request.studentId.telegramId || (student ? student.telegramId : null);
+      if (studentTelegramId) {
+        try {
+          await bot.telegram.sendMessage(
+            studentTelegramId,
+            `⚠️ Обращение #${request._id} по категории "${request.categoryId.name}" было возвращено в очередь администратором. Оно снято с вашего назначения.`
+          );
+        } catch (notifyErr) {
+          console.error('Error notifying student about reopen:', notifyErr);
+        }
+      }
+    }
+
+    const previousStatus = request.status;
+
+    // Reset request
+    request.status = 'approved';
+    request.studentId = null;
+    request.answerText = null;
+    request.adminComment = null;
+    await request.save();
+
+    // Send to student chat
+    const studentChatId = process.env.STUDENT_CHAT_ID;
+    const studentMessage = `
+📨 Обращение #${request._id} (возвращено в очередь администратором)
+📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
+
+📝 Текст обращения:
+${request.text}
+`;
+
+    await bot.telegram.sendMessage(studentChatId, studentMessage, {
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
+          ]
+        ]
+      }
+    });
+
+    await ctx.reply(`✅ Обращение #${request._id} (было: ${previousStatus}) возвращено в очередь студентов.`);
+
+    logAction('admin_reopened_request', {
+      adminId: user._id,
+      requestId: request._id,
+      previousStatus
+    });
+  } catch (error) {
+    console.error('Error handling reopen request:', error);
+    await ctx.reply('Произошла ошибка. Пожалуйста, попробуйте еще раз позже.');
+  }
+};
+
 module.exports = {
   handleGetAdmin,
   handleApproveRequest,
@@ -1655,5 +1767,6 @@ module.exports = {
   handleDeleteFAQFromCategory,
   handleConfirmDeleteFAQ,
   handleCancel,
+  handleReopenRequest,
   adminStates
 };

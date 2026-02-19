@@ -312,6 +312,7 @@ bot.command('delete_faq', adminHandlers.handleDeleteFAQ);
 bot.command('categories', categoryHandlers.handleListCategories);
 // bot.command('faqs', faqHandlers.handleListFAQs);
 bot.command('requests', requestHandlers.handleListRequests);
+bot.command('reopen', (ctx) => adminHandlers.handleReopenRequest(ctx, bot));
 bot.command('stats', requestHandlers.handleStats);
 
 // Admin callback handlers
