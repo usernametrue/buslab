@@ -75,7 +75,10 @@ const handleTakeRequest = async (ctx, bot) => {
     user.currentAssignmentId = request._id;
     await user.save();
 
-    // Update message in student chat
+    // Update message in student chat (clear tracked message ID since we're editing it)
+    request.studentChatMessageId = null;
+    await request.save();
+
     const studentName = user.username ? `@${user.username}` : `${user.firstName || 'Студент'} ${user.lastName || ''}`;
     await ctx.editMessageText(
       ctx.callbackQuery.message.text + `\n\nПринято в работу: ${studentName}`,
@@ -551,7 +554,7 @@ const handleRejectAssignment = async (ctx, bot) => {
     user.currentAssignmentId = null;
     await user.save();
 
-    // Send back to student chat
+    // Send back to student chat and track message ID
     const studentChatId = process.env.STUDENT_CHAT_ID;
     const studentMessage = `
 📨 Обращение #${request._id} (возвращено в очередь)
@@ -561,7 +564,7 @@ const handleRejectAssignment = async (ctx, bot) => {
 ${request.text}
 `;
 
-    await bot.telegram.sendMessage(studentChatId, studentMessage, {
+    const sent = await bot.telegram.sendMessage(studentChatId, studentMessage, {
       reply_markup: {
         inline_keyboard: [
           [
@@ -570,6 +573,9 @@ ${request.text}
         ]
       }
     });
+
+    request.studentChatMessageId = sent.message_id;
+    await request.save();
 
     // Reset to main menu keyboard
     const { getMainMenuKeyboard } = require('./common');

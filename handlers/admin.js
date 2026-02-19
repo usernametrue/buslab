@@ -11,6 +11,54 @@ const { studentStates } = require('./student');
 const adminStates = new Map();
 
 /**
+ * Delete old student chat message for a request
+ */
+const deleteStudentChatMessage = async (bot, request) => {
+  if (!request.studentChatMessageId) return;
+  try {
+    await bot.telegram.deleteMessage(
+      process.env.STUDENT_CHAT_ID,
+      request.studentChatMessageId
+    );
+  } catch (err) {
+    // Message may already be deleted or too old
+    console.warn(`Failed to delete student chat message ${request.studentChatMessageId}:`, err.message);
+  }
+  request.studentChatMessageId = null;
+};
+
+/**
+ * Send request to student chat and save message ID
+ */
+const sendToStudentChat = async (bot, request, label = '') => {
+  const studentChatId = process.env.STUDENT_CHAT_ID;
+  const labelText = label ? ` (${label})` : '';
+
+  const studentMessage = `
+📨 Обращение #${request._id}${labelText}
+📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
+
+📝 Текст обращения:
+${request.text}
+`;
+
+  const sent = await bot.telegram.sendMessage(studentChatId, studentMessage, {
+    reply_markup: {
+      inline_keyboard: [
+        [
+          { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
+        ]
+      ]
+    }
+  });
+
+  request.studentChatMessageId = sent.message_id;
+  await request.save();
+
+  return sent;
+};
+
+/**
  * Handle /getadmin command
  */
 const handleGetAdmin = async (ctx) => {
@@ -86,24 +134,7 @@ const handleApproveRequest = async (ctx, bot) => {
 
     // Send to student chat
     try {
-      const studentChatId = process.env.STUDENT_CHAT_ID;
-      const studentMessage = `
-📨 Новое обращение #${request._id}
-📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
-
-📝 Текст обращения:
-${request.text}
-`;
-
-      await bot.telegram.sendMessage(studentChatId, studentMessage, {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
-            ]
-          ]
-        }
-      });
+      await sendToStudentChat(bot, request, 'новое');
     } catch (notifyError) {
       console.error('Error sending request to student chat:', notifyError);
     }
@@ -1799,8 +1830,6 @@ const handleResendToStudents = async (ctx, bot) => {
       return;
     }
 
-    const studentChatId = process.env.STUDENT_CHAT_ID;
-
     if (arg === 'all') {
       const approvedRequests = await Request.find({ status: 'approved' })
         .populate('categoryId')
@@ -1816,23 +1845,8 @@ const handleResendToStudents = async (ctx, bot) => {
 
       for (const request of approvedRequests) {
         try {
-          const studentMessage = `
-📨 Обращение #${request._id} (повторная отправка)
-📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
-
-📝 Текст обращения:
-${request.text}
-`;
-
-          await bot.telegram.sendMessage(studentChatId, studentMessage, {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
-                ]
-              ]
-            }
-          });
+          await deleteStudentChatMessage(bot, request);
+          await sendToStudentChat(bot, request, 'повторная отправка');
           sentCount++;
         } catch (sendError) {
           console.error(`Error resending request #${request._id}:`, sendError);
@@ -1848,7 +1862,6 @@ ${request.text}
       await ctx.reply(resultMessage);
       logAction('admin_resent_all_approved', { adminId: user._id, sentCount, errorCount });
     } else {
-      // Resend specific request by ID
       const request = await Request.findById(arg)
         .populate('categoryId');
 
@@ -1862,23 +1875,8 @@ ${request.text}
         return;
       }
 
-      const studentMessage = `
-📨 Обращение #${request._id} (повторная отправка)
-📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
-
-📝 Текст обращения:
-${request.text}
-`;
-
-      await bot.telegram.sendMessage(studentChatId, studentMessage, {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
-            ]
-          ]
-        }
-      });
+      await deleteStudentChatMessage(bot, request);
+      await sendToStudentChat(bot, request, 'повторная отправка');
 
       await ctx.reply(`✅ Обращение #${request._id} переотправлено в студенческий чат.`);
       logAction('admin_resent_request', { adminId: user._id, requestId: request._id });
@@ -1912,8 +1910,6 @@ const handleUnassign = async (ctx, bot) => {
       return;
     }
 
-    const studentChatId = process.env.STUDENT_CHAT_ID;
-
     if (arg === 'all') {
       const includeAnswered = args[2] === 'answered';
       const statuses = includeAnswered ? ['assigned', 'answered'] : ['assigned'];
@@ -1940,28 +1936,14 @@ const handleUnassign = async (ctx, bot) => {
             studentsToNotify.set(student._id.toString(), student);
           }
 
+          await deleteStudentChatMessage(bot, request);
+
           request.status = 'approved';
           request.studentId = null;
           request.answerText = null;
           await request.save();
 
-          const studentMessage = `
-📨 Обращение #${request._id} (возвращено в очередь)
-📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
-
-📝 Текст обращения:
-${request.text}
-`;
-
-          await bot.telegram.sendMessage(studentChatId, studentMessage, {
-            reply_markup: {
-              inline_keyboard: [
-                [
-                  { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
-                ]
-              ]
-            }
-          });
+          await sendToStudentChat(bot, request, 'возвращено в очередь');
 
           processedCount++;
         } catch (reqError) {
@@ -1993,7 +1975,6 @@ ${request.text}
       await ctx.reply(resultMessage);
       logAction('admin_unassigned_all', { adminId: user._id, processedCount, errorCount, studentsAffected: studentsToNotify.size, includeAnswered });
     } else {
-      // Unassign specific request by ID
       const request = await Request.findById(arg)
         .populate('studentId')
         .populate('categoryId');
@@ -2025,28 +2006,14 @@ ${request.text}
         }
       }
 
+      await deleteStudentChatMessage(bot, request);
+
       request.status = 'approved';
       request.studentId = null;
       request.answerText = null;
       await request.save();
 
-      const studentMessage = `
-📨 Обращение #${request._id} (возвращено в очередь)
-📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
-
-📝 Текст обращения:
-${request.text}
-`;
-
-      await bot.telegram.sendMessage(studentChatId, studentMessage, {
-        reply_markup: {
-          inline_keyboard: [
-            [
-              { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
-            ]
-          ]
-        }
-      });
+      await sendToStudentChat(bot, request, 'возвращено в очередь');
 
       await ctx.reply(`✅ Обращение #${request._id} забрано у ${studentName} и возвращено в очередь.`);
       logAction('admin_unassigned_request', { adminId: user._id, requestId: request._id, studentId: student?._id });

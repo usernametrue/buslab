@@ -31,8 +31,12 @@ const requestSchema = new mongoose.Schema({
     type: String,
     default: null
   },
-  adminComment: {
+adminComment: {
     type: String,
+    default: null
+  },
+  studentChatMessageId: {
+    type: Number,
     default: null
   }
 }, {
