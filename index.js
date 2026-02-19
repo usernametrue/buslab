@@ -310,6 +310,8 @@ bot.command('add_faq', adminHandlers.handleAddFAQ);
 bot.command('edit_faq', adminHandlers.handleEditFAQ);
 bot.command('delete_faq', adminHandlers.handleDeleteFAQ);
 bot.command('categories', categoryHandlers.handleListCategories);
+bot.command('resend', (ctx) => adminHandlers.handleResendToStudents(ctx, bot));
+bot.command('unassign', (ctx) => adminHandlers.handleUnassign(ctx, bot));
 // bot.command('faqs', faqHandlers.handleListFAQs);
 bot.command('requests', requestHandlers.handleListRequests);
 bot.command('reopen', (ctx) => adminHandlers.handleReopenRequest(ctx, bot));

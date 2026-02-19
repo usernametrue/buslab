@@ -64,19 +64,30 @@ const handleApproveRequest = async (ctx, bot) => {
       return;
     }
 
+    // IMMEDIATELY UPDATE THE CALLBACK MESSAGE TO REMOVE INLINE KEYBOARD
+    await ctx.editMessageText(
+      ctx.callbackQuery.message.text + '\n\n✅ Одобрено',
+      { reply_markup: { inline_keyboard: [] } }
+    );
+
     // Update request status
     request.status = 'approved';
     await request.save();
 
     // Notify user
-    await bot.telegram.sendMessage(
-      request.userId.telegramId,
-      `✅ Ваше обращение по категории "${request.categoryId.name}" принято к обработке.`
-    );
+    try {
+      await bot.telegram.sendMessage(
+        request.userId.telegramId,
+        `✅ Ваше обращение по категории "${request.categoryId.name}" принято к обработке.`
+      );
+    } catch (notifyError) {
+      console.error('Error notifying user about approved request:', notifyError);
+    }
 
     // Send to student chat
-    const studentChatId = process.env.STUDENT_CHAT_ID;
-    const studentMessage = `
+    try {
+      const studentChatId = process.env.STUDENT_CHAT_ID;
+      const studentMessage = `
 📨 Новое обращение #${request._id}
 📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
 
@@ -84,21 +95,18 @@ const handleApproveRequest = async (ctx, bot) => {
 ${request.text}
 `;
 
-    await bot.telegram.sendMessage(studentChatId, studentMessage, {
-      reply_markup: {
-        inline_keyboard: [
-          [
-            { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
+      await bot.telegram.sendMessage(studentChatId, studentMessage, {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
+            ]
           ]
-        ]
-      }
-    });
-
-    // Update callback message - REMOVE INLINE KEYBOARD
-    await ctx.editMessageText(
-      ctx.callbackQuery.message.text + '\n\n✅ Одобрено',
-      { reply_markup: { inline_keyboard: [] } }
-    );
+        }
+      });
+    } catch (notifyError) {
+      console.error('Error sending request to student chat:', notifyError);
+    }
 
     await ctx.answerCbQuery('Обращение одобрено и отправлено исполнителям.');
     logAction('admin_approved_request', {
@@ -107,7 +115,20 @@ ${request.text}
     });
   } catch (error) {
     console.error('Error handling approve request:', error);
-    await ctx.answerCbQuery('Произошла ошибка. Пожалуйста, попробуйте еще раз позже.');
+    // Try to remove buttons even on error
+    try {
+      await ctx.editMessageText(
+        ctx.callbackQuery.message.text + '\n\n❗ Произошла ошибка при обработке',
+        { reply_markup: { inline_keyboard: [] } }
+      );
+    } catch (editError) {
+      // editMessageText may fail if already edited
+    }
+    try {
+      await ctx.answerCbQuery('Произошла ошибка. Пожалуйста, попробуйте еще раз позже.');
+    } catch (cbError) {
+      // answerCbQuery may fail if already answered
+    }
   }
 };
 
@@ -246,15 +267,24 @@ const handleApproveAnswer = async (ctx, bot) => {
       return;
     }
 
-    if (request.status !== 'answered') {
+if (request.status !== 'answered') {
       await ctx.answerCbQuery('Это обращение находится в неправильном статусе.');
       // Update callback message to remove inline keyboard
+      const statusText = request.status === 'closed'
+        ? ctx.callbackQuery.message.text + '\n\n⚠️ Статус обращения: завершено'
+        : ctx.callbackQuery.message.text + `\n\n⚠️ Статус обращения: ${request.status}`;
       await ctx.editMessageText(
-        request.status === 'closed' ? ctx.callbackQuery.message.text + '\n\n⚠️ Статус обращения: завершено' : '',
+        statusText,
         { reply_markup: { inline_keyboard: [] } }
       );
       return;
     }
+
+    // IMMEDIATELY UPDATE THE CALLBACK MESSAGE TO REMOVE INLINE KEYBOARD
+    await ctx.editMessageText(
+      ctx.callbackQuery.message.text + '\n\n✅ Одобрено и отправлено пользователю',
+      { reply_markup: { inline_keyboard: [] } }
+    );
 
     // Update request status
     request.status = 'closed';
@@ -265,25 +295,27 @@ const handleApproveAnswer = async (ctx, bot) => {
     student.currentAssignmentId = null;
     await student.save();
 
-    // Update callback message to remove inline keyboard
-    await ctx.editMessageText(
-      ctx.callbackQuery.message.text + '\n\n✅ Одобрено и отправлено пользователю',
-      { reply_markup: { inline_keyboard: [] } }
-    );
-
     // Notify user
-    await bot.telegram.sendMessage(
-      request.userId.telegramId,
-      `✅ Ваш запрос по категории "${request.categoryId.name}" был обработан.\n\n📝 Ответ:\n${request.answerText}`
-    );
+    try {
+      await bot.telegram.sendMessage(
+        request.userId.telegramId,
+        `✅ Ваш запрос по категории "${request.categoryId.name}" был обработан.\n\n📝 Ответ:\n${request.answerText}`
+      );
+    } catch (notifyError) {
+      console.error('Error notifying user about approved answer:', notifyError);
+    }
 
     // Notify student with main menu keyboard reset
-    const { getMainMenuKeyboard } = require('./common');
-    await bot.telegram.sendMessage(
-      student.telegramId,
-      `✅ Ваш ответ на обращение #${request._id} был одобрен и отправлен пользователю.`,
-      getMainMenuKeyboard()
-    );
+    try {
+      const { getMainMenuKeyboard } = require('./common');
+      await bot.telegram.sendMessage(
+        student.telegramId,
+        `✅ Ваш ответ на обращение #${request._id} был одобрен и отправлен пользователю.`,
+        getMainMenuKeyboard()
+      );
+    } catch (notifyError) {
+      console.error('Error notifying student about approved answer:', notifyError);
+    }
 
     await ctx.answerCbQuery('Ответ одобрен и отправлен пользователю.');
     logAction('admin_approved_answer', {
@@ -293,7 +325,20 @@ const handleApproveAnswer = async (ctx, bot) => {
     });
   } catch (error) {
     console.error('Error handling approve answer:', error);
-    await ctx.answerCbQuery('Произошла ошибка. Пожалуйста, попробуйте еще раз позже.');
+    // Try to remove buttons even on error
+    try {
+      await ctx.editMessageText(
+        ctx.callbackQuery.message.text + '\n\n❗ Произошла ошибка при обработке',
+        { reply_markup: { inline_keyboard: [] } }
+      );
+    } catch (editError) {
+      // editMessageText may fail if already edited
+    }
+    try {
+      await ctx.answerCbQuery('Произошла ошибка. Пожалуйста, попробуйте еще раз позже.');
+    } catch (cbError) {
+      // answerCbQuery may fail if already answered
+    }
   }
 };
 
@@ -318,8 +363,11 @@ const handleDeclineAnswer = async (ctx) => {
     if (request.status !== 'answered') {
       await ctx.answerCbQuery('Это обращение находится в неправильном статусе.');
       // Update callback message to remove inline keyboard
+      const statusText = request.status === 'closed'
+        ? ctx.callbackQuery.message.text + '\n\n⚠️ Статус обращения: завершено'
+        : ctx.callbackQuery.message.text + `\n\n⚠️ Статус обращения: ${request.status}`;
       await ctx.editMessageText(
-        request.status === 'closed' ? ctx.callbackQuery.message.text + '\n\n⚠️ Статус обращения: завершено' : '',
+        statusText,
         { reply_markup: { inline_keyboard: [] } }
       );
       return;
@@ -1729,6 +1777,286 @@ ${request.text}
   }
 };
 
+/**
+ * Handle /resend command - resend approved requests to student chat
+ * Usage: /resend all - resend all approved requests
+ *        /resend <requestId> - resend specific approved request
+ */
+const handleResendToStudents = async (ctx, bot) => {
+  try {
+    const user = await getOrCreateUser(ctx);
+
+    if (!isAdmin(user)) {
+      await ctx.reply('Эта команда доступна только администраторам.');
+      return;
+    }
+
+    const args = ctx.message.text.split(' ');
+    const arg = args[1];
+
+    if (!arg) {
+      await ctx.reply('Использование:\n/resend all — переотправить все approved обращения\n/resend <id> — переотправить конкретное обращение');
+      return;
+    }
+
+    const studentChatId = process.env.STUDENT_CHAT_ID;
+
+    if (arg === 'all') {
+      const approvedRequests = await Request.find({ status: 'approved' })
+        .populate('categoryId')
+        .sort({ createdAt: 1 });
+
+      if (approvedRequests.length === 0) {
+        await ctx.reply('Нет обращений со статусом "approved" для переотправки.');
+        return;
+      }
+
+      let sentCount = 0;
+      let errorCount = 0;
+
+      for (const request of approvedRequests) {
+        try {
+          const studentMessage = `
+📨 Обращение #${request._id} (повторная отправка)
+📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
+
+📝 Текст обращения:
+${request.text}
+`;
+
+          await bot.telegram.sendMessage(studentChatId, studentMessage, {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
+                ]
+              ]
+            }
+          });
+          sentCount++;
+        } catch (sendError) {
+          console.error(`Error resending request #${request._id}:`, sendError);
+          errorCount++;
+        }
+      }
+
+      let resultMessage = `✅ Переотправлено: ${sentCount} из ${approvedRequests.length}.`;
+      if (errorCount > 0) {
+        resultMessage += `\n❌ Ошибок: ${errorCount}.`;
+      }
+
+      await ctx.reply(resultMessage);
+      logAction('admin_resent_all_approved', { adminId: user._id, sentCount, errorCount });
+    } else {
+      // Resend specific request by ID
+      const request = await Request.findById(arg)
+        .populate('categoryId');
+
+      if (!request) {
+        await ctx.reply(`Обращение #${arg} не найдено.`);
+        return;
+      }
+
+      if (request.status !== 'approved') {
+        await ctx.reply(`Обращение #${arg} имеет статус "${request.status}", а не "approved". Переотправка невозможна.`);
+        return;
+      }
+
+      const studentMessage = `
+📨 Обращение #${request._id} (повторная отправка)
+📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
+
+📝 Текст обращения:
+${request.text}
+`;
+
+      await bot.telegram.sendMessage(studentChatId, studentMessage, {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
+            ]
+          ]
+        }
+      });
+
+      await ctx.reply(`✅ Обращение #${request._id} переотправлено в студенческий чат.`);
+      logAction('admin_resent_request', { adminId: user._id, requestId: request._id });
+    }
+  } catch (error) {
+    console.error('Error handling resend command:', error);
+    await ctx.reply('Произошла ошибка. Пожалуйста, попробуйте еще раз позже.');
+  }
+};
+
+/**
+ * Handle /unassign command - take back requests from students and return to queue
+ * Usage: /unassign all - unassign all assigned requests
+ *        /unassign all answered - unassign all assigned + answered requests
+ *        /unassign <requestId> - unassign specific request (assigned or answered)
+ */
+const handleUnassign = async (ctx, bot) => {
+  try {
+    const user = await getOrCreateUser(ctx);
+
+    if (!isAdmin(user)) {
+      await ctx.reply('Эта команда доступна только администраторам.');
+      return;
+    }
+
+    const args = ctx.message.text.split(' ');
+    const arg = args[1];
+
+    if (!arg) {
+      await ctx.reply('Использование:\n/unassign all — забрать все assigned обращения\n/unassign all answered — забрать все assigned + answered\n/unassign <id> — забрать конкретное обращение');
+      return;
+    }
+
+    const studentChatId = process.env.STUDENT_CHAT_ID;
+
+    if (arg === 'all') {
+      const includeAnswered = args[2] === 'answered';
+      const statuses = includeAnswered ? ['assigned', 'answered'] : ['assigned'];
+
+      const activeRequests = await Request.find({ status: { $in: statuses } })
+        .populate('studentId')
+        .populate('categoryId')
+        .sort({ createdAt: 1 });
+
+      if (activeRequests.length === 0) {
+        await ctx.reply(`Нет обращений со статусом ${statuses.map(s => `"${s}"`).join(', ')} для возврата в очередь.`);
+        return;
+      }
+
+      let processedCount = 0;
+      let errorCount = 0;
+      const studentsToNotify = new Map();
+
+      for (const request of activeRequests) {
+        try {
+          const student = request.studentId;
+
+          if (student && !studentsToNotify.has(student._id.toString())) {
+            studentsToNotify.set(student._id.toString(), student);
+          }
+
+          request.status = 'approved';
+          request.studentId = null;
+          request.answerText = null;
+          await request.save();
+
+          const studentMessage = `
+📨 Обращение #${request._id} (возвращено в очередь)
+📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
+
+📝 Текст обращения:
+${request.text}
+`;
+
+          await bot.telegram.sendMessage(studentChatId, studentMessage, {
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
+                ]
+              ]
+            }
+          });
+
+          processedCount++;
+        } catch (reqError) {
+          console.error(`Error unassigning request #${request._id}:`, reqError);
+          errorCount++;
+        }
+      }
+
+      for (const [, student] of studentsToNotify) {
+        try {
+          student.currentAssignmentId = null;
+          await student.save();
+
+          await bot.telegram.sendMessage(
+            student.telegramId,
+            '⚠️ Все ваши обращения были отозваны администратором и возвращены в общую очередь.'
+          );
+        } catch (notifyError) {
+          console.error(`Error notifying student ${student.telegramId}:`, notifyError);
+        }
+      }
+
+      let resultMessage = `✅ Возвращено в очередь: ${processedCount} из ${activeRequests.length}.`;
+      resultMessage += `\n👥 Затронуто студентов: ${studentsToNotify.size}.`;
+      if (errorCount > 0) {
+        resultMessage += `\n❌ Ошибок: ${errorCount}.`;
+      }
+
+      await ctx.reply(resultMessage);
+      logAction('admin_unassigned_all', { adminId: user._id, processedCount, errorCount, studentsAffected: studentsToNotify.size, includeAnswered });
+    } else {
+      // Unassign specific request by ID
+      const request = await Request.findById(arg)
+        .populate('studentId')
+        .populate('categoryId');
+
+      if (!request) {
+        await ctx.reply(`Обращение #${arg} не найдено.`);
+        return;
+      }
+
+      if (request.status !== 'assigned' && request.status !== 'answered') {
+        await ctx.reply(`Обращение #${arg} имеет статус "${request.status}". Забрать можно только "assigned" или "answered".`);
+        return;
+      }
+
+      const student = request.studentId;
+      const studentName = student ? (student.username ? `@${student.username}` : student.telegramId) : 'неизвестен';
+
+      if (student) {
+        student.currentAssignmentId = null;
+        await student.save();
+
+        try {
+          await bot.telegram.sendMessage(
+            student.telegramId,
+            `⚠️ Обращение #${request._id} по категории "${request.categoryId.name}" было отозвано администратором и возвращено в общую очередь.`
+          );
+        } catch (notifyError) {
+          console.error(`Error notifying student about unassign:`, notifyError);
+        }
+      }
+
+      request.status = 'approved';
+      request.studentId = null;
+      request.answerText = null;
+      await request.save();
+
+      const studentMessage = `
+📨 Обращение #${request._id} (возвращено в очередь)
+📂 Категория: ${request.categoryId.name} ${request.categoryId.hashtag}
+
+📝 Текст обращения:
+${request.text}
+`;
+
+      await bot.telegram.sendMessage(studentChatId, studentMessage, {
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: '🔄 Взять в работу', callback_data: `take_request:${request._id}` }
+            ]
+          ]
+        }
+      });
+
+      await ctx.reply(`✅ Обращение #${request._id} забрано у ${studentName} и возвращено в очередь.`);
+      logAction('admin_unassigned_request', { adminId: user._id, requestId: request._id, studentId: student?._id });
+    }
+  } catch (error) {
+    console.error('Error handling unassign command:', error);
+    await ctx.reply('Произошла ошибка. Пожалуйста, попробуйте еще раз позже.');
+  }
+};
+
 module.exports = {
   handleGetAdmin,
   handleApproveRequest,
@@ -1768,5 +2096,7 @@ module.exports = {
   handleConfirmDeleteFAQ,
   handleCancel,
   handleReopenRequest,
+  handleResendToStudents,
+  handleUnassign,
   adminStates
 };
