@@ -1,0 +1,74 @@
+{
+  "commands": {
+    "start": {
+      "welcome_user": "Huquqiy klinika botiga xush kelibsiz!\n\nBu yerda siz:\n- Huquqiy savol berishingiz\n- Tez-tez beriladigan savollarni (FAQ) ko'rishingiz\n- Murojaatlaringiz holatini kuzatishingiz mumkin\n\nQuyidagi menyudan amalni tanlang:",
+      "welcome_student": "Xush kelibsiz, talaba!\n\nBu yerda siz:\n- Murojaatlarga javoblaringizni ko'rishingiz\n- Joriy ishlaydigan murojaatni tekshirishingiz\n- Ish statistikangizni ko'rishingiz mumkin\n\nQuyidagi menyudan amalni tanlang:"
+    }
+  },
+  "buttons": {
+    "ask_question": "Savol berish",
+    "faq": "FAQ",
+    "my_requests": "Mening murojaatlarim",
+    "help": "❓ Yordam",
+    "back": "Orqaga",
+    "confirm": "Tasdiqlash",
+    "edit": "O'zgartirish",
+    "cancel": "Bekor qilish",
+    "current_assignment": "Joriy murojaat",
+    "my_answers": "Mening javoblarim",
+    "statistics": "Statistika",
+    "confirm_answer": "Javob yuborishni tasdiqlash",
+    "edit_answer": "Javobni o'zgartirish",
+    "reject_assignment": "Murojaatdan voz kechish"
+  },
+  "errors": {
+    "general": "Xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.",
+    "admin_only": "Bu buyruq faqat administratorlar uchun mavjud.",
+    "student_only": "Bu funksiya faqat talabalar uchun mavjud.",
+    "not_found": "Topilmadi.",
+    "invalid_length": "Murojaat matni kamida {{min}} ta belgi bo'lishi kerak. Iltimos, savolingizni to'ldiring.",
+    "category_not_found": "Kategoriya topilmadi. Iltimos, ro'yxatdan tanlang.",
+    "no_categories": "Hozirda mavjud kategoriyalar yo'q. Iltimos, keyinroq urinib ko'ring.",
+    "no_active_assignment": "Sizda faol murojaatlar yo'q.",
+    "already_has_assignment": "Siz allaqachon boshqa murojaatni ishlamoqdasiz. Avval uni tugatib, keyin yangisini oling."
+  },
+  "success": {
+    "request_sent": "Sizning murojaatingiz muvaffaqiyatli yuborildi! Ko'rib chiqilganida sizga xabar beramiz.",
+    "category_created": "\"{{name}}\" kategoriyasi {{hashtag}} hashtegi bilan muvaffaqiyatli yaratildi!",
+    "language_changed": "Til muvaffaqiyatli o'zgartirildi!"
+  },
+  "statuses": {
+    "pending": "⏳ Ko'rib chiqilmoqda",
+    "approved": "👨‍💼 Ijrochi kutilmoqda",
+    "declined": "❌ Rad etildi",
+    "assigned": "🔄 Ishlanmoqda",
+    "answered": "✅ Javob tekshirilmoqda",
+    "closed": "✅ Yopildi"
+  },
+  "prompts": {
+    "select_category": "Savolingiz kategoriyasini tanlang:",
+    "enter_request": "Huquqiy savolingiz matnini kiriting (kamida 150 belgi):",
+    "confirm_request": "Murojaatingiz matnini tekshiring:",
+    "select_faq_category": "FAQ kategoriyasini tanlang:",
+    "select_faq_question": "Savolni tanlang:",
+    "enter_answer": "Ushbu murojaatga javobingizni yozing va yuboring. Keyin \"Javob yuborishni tasdiqlash\" tugmasini bosing.",
+    "check_answer": "Javobingizni tekshiring:"
+  },
+  "language": {
+    "select": "Tilni tanlang / Выберите язык:",
+    "changed": "Til muvaffaqiyatli o'zbek tiliga o'zgartirildi!"
+  },
+  "lists": {
+    "my_requests_title": "📋 Sizning murojaatlaringiz:",
+    "no_requests": "Sizda hali murojaatlar yo'q.",
+    "request_date": "Sana:",
+    "answer_label": "📝 Javob:",
+    "comment_label": "Izoh:",
+    "select_action": "Amalni tanlang:"
+  },
+  "help": {
+    "user": "📚 **Huquqiy klinika bot foydalanish qo'llanmasi**\n\n**Asosiy funksiyalar:**\n\n🔸 **Savol berish**\n   • Huquqiy savolingiz uchun mos kategoriyani tanlang\n   • Vaziyatingizni batafsil tasvirlab bering (kamida 150 belgi)\n   • Matnni tekshiring va yuborishni tasdiqlang\n   • Savolingiz administrator tomonidan ko'rib chiqiladi\n\n🔸 **FAQ (Tez-tez beriladigan savollar)**\n   • Mashhur savollarga tayyor javoblarni ko'ring\n   • Kategoriyani tanlang va mos savolni toping\n   • Ehtimol, savolingiz allaqachon javobga ega\n\n🔸 **Mening murojaatlarim**\n   • Murojaatlaringiz holatini kuzating\n   • Olingan javoblarni ko'ring\n   • Rad etilish sabablarini bilib oling (agar mavjud bo'lsa)\n\n**📋 Murojaatlar holatlari:**\n• ⏳ Ko'rib chiqilmoqda - murojaatingiz administrator tomonidan tekshirilmoqda\n• 👨‍💼 Ijrochi kutilmoqda - murojaat tasdiqlandi, ijrochi izlanmoqda\n• 🔄 Ishlanmoqda - talaba javob ustida ishlamoqda\n• ✅ Javob tekshirilmoqda - javob tayyor, administrator tekshirmoqda\n• ✅ Yopildi - savolingizga javob oldingiz\n• ❌ Rad etildi - murojaat ko'rib chiqishga olinmadi\n\n**📝 Savollarga talablar:**\n• Murojaat matnida kamida 150 belgi\n• Huquqiy vaziyatingizni aniq ifodalang\n• Barcha muhim tafsilot va holatlarni ko'rsating\n• Mos huquq kategoriyasini tanlang\n\n**⏰ Ishlov berish vaqti:**\n• Admin ko'rib chiqishi: odatda 1-2 kun ichida\n• Talaba javob tayyorlashi: 3-7 kun\n• Admin javobni tekshirishi: 1-2 kun\n\n**❓ Muammolar yuzaga kelsa:**\n• Savolingiz etarli tafsilotlarni o'z ichiga olganiga ishonch hosil qiling\n• Kategoriya to'g'ri tanlanganini tekshiring\n• Rad etilganda administrator izohini diqqat bilan o'qing\n\n**⚠️ Esda tutish kerak:**\n- Maslahatlar ma'lumot xarakteriga ega\n- To'liq huquqiy yordamni almashtirmaydi\n- Jiddiy huquqiy masalalarda amaliyotchi yuristga murojaat qiling",
+    "admin": "🔧 Administrator uchun yordam\n\nKategoriyalarni boshqarish:\n/add\\_category - Yangi kategoriya qo'shish\n/edit\\_category - Mavjud kategoriyani tahrirlash\n/delete\\_category - Kategoriyani o'chirish\n/categories - Barcha kategoriyalarni ko'rsatish\n\nFAQ boshqaruvi:\n/add\\_faq - Yangi FAQ savoli qo'shish\n/edit\\_faq - Mavjud FAQ savolini tahrirlash\n/delete\\_faq - FAQ savolini o'chirish\n/faqs - Barcha FAQ larni kategoriyalar bo'yicha ko'rsatish\n\nMurojaatlar va statistika:\n/requests [sahifa] - Barcha murojaatlar ro'yxatini ko'rsatish (sahifalash bilan)\n/stats - Bot statistikasini ko'rsatish\n\nAdministrator huquqlari:\n/getadmin - Administrator huquqlarini olish (faqat admin chatida)\n\nMurojaatlarni qayta ishlash:\n• Foydalanuvchilardan kelgan murojaatlar \"Tasdiqlash\" va \"Rad etish\" tugmalari bilan paydo bo'ladi\n• Tasdiqlanganda - murojaat talabalarga yuboriladi\n• Rad etilganda - rad etish sababini ko'rsatish kerak\n• Talaba javoblari \"Tasdiqlash\" va \"Rad etish\" tugmalari bilan keladi\n• Tasdiqlanganda - javob foydalanuvchiga yuboriladi\n• Rad etilganda - talaba javobni tuzatishi yoki murojaatdan voz kechishi mumkin\n\n⚠️ Muhim eslatmalar:\n- Kategoriyalarni o'chirish faqat ular murojaatlar yoki FAQ da ishlatilmagan taqdirdagina mumkin\n- Barcha harakatlar tizimda qayd etiladi\n- Rad etishda doimo foydalanuvchilar/talabalar uchun aniq sabab ko'rsating",
+    "student": "👨‍🎓 Talabalar uchun yordam\n\nMurojaatlar bilan qanday ishlash:\n\n1️⃣ Murojaat olish:\n   • Administrator tomonidan tasdiqlangan murojaatlar ushbu chatda paydo bo'ladi\n   • Murojaatni qabul qilish uchun \"🔄 Ishga olish\" tugmasini bosing\n   • ⚠️ Bir vaqtda faqat bitta murojaatni qayta ishlash mumkin\n\n2️⃣ Murojaat ustida ishlash:\n   • Qabul qilgandan so'ng murojaat tafsilotlari shaxsiy xabarlarga keladi\n   • Shaxsiy chatda botga javobingizni yozing\n   • Javobingizni tekshiring va \"Javob yuborishni tasdiqlash\" tugmasini bosing\n\n3️⃣ Murojaat bilan amallar:\n   • Javob yuborishni tasdiqlash - javobni administrator tekshiruviga yuborish\n   • Javobni tahrirlash - javobingizni o'zgartirish\n   • Murojaatdan voz kechish - murojaatni umumiy navbatga qaytarish\n\n4️⃣ Javob yuborgandan so'ng:\n   • Administrator javobingizni tekshiradi\n   • Agar tasdiqlansa - javob foydalanuvchiga boradi, siz yangi murojaat uchun bo'shasiz\n   • Agar rad etilsa - izoh olasiz va javobni tuzatishingiz mumkin\n\n📋 Murojaat holatlari:\n• ⏳ Ko'rib chiqilmoqda - admin qarori kutilmoqda\n• 👨‍💼 Ijrochi kutilmoqda - ishga olish mumkin\n• 🔄 Ishlanmoqda - talaba tomonidan qayta ishlanmoqda\n• ✅ Tekshirilmoqda - javob adminga yuborildi\n• ✅ Yopildi - murojaat yakunlandi\n• ❌ Rad etildi - admin tomonidan rad etildi\n\n⚠️ Muhim qoidalar:\n- Huquqiy savollarga sifatli va batafsil javob bering\n- Javobga ishonchingiz komil bo'lmasa - murojaatdan voz kechish yaxshiroq\n- Professional axloqni saqlang\n- Bir talaba = bitta faol topshiriq"
+  }
+}

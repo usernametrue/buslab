@@ -1,0 +1,74 @@
+{
+  "commands": {
+    "start": {
+      "welcome_user": "Welcome to the Legal Clinic Bot!\n\nHere you can:\n- Ask legal questions\n- Browse frequently asked questions (FAQ)\n- Track the status of your requests\n\nSelect an action from the menu below:",
+      "welcome_student": "Welcome, student!\n\nHere you can:\n- View your answers to requests\n- Check your current assignment\n- View your work statistics\n\nSelect an action from the menu below:"
+    }
+  },
+  "buttons": {
+    "ask_question": "Ask Question",
+    "faq": "FAQ",
+    "my_requests": "My Requests",
+    "help": "❓ Help",
+    "back": "Back",
+    "confirm": "Confirm",
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "current_assignment": "Current Assignment",
+    "my_answers": "My Answers",
+    "statistics": "Statistics",
+    "confirm_answer": "Confirm Answer Submission",
+    "edit_answer": "Edit Answer",
+    "reject_assignment": "Reject Assignment"
+  },
+  "errors": {
+    "general": "An error occurred. Please try again later.",
+    "admin_only": "This command is available only to administrators.",
+    "student_only": "This function is available only to students.",
+    "not_found": "Not found.",
+    "invalid_length": "Request text must contain at least {{min}} characters. Please expand your question.",
+    "category_not_found": "Category not found. Please select from the list.",
+    "no_categories": "No categories are currently available. Please try again later.",
+    "no_active_assignment": "You have no active assignments.",
+    "already_has_assignment": "You are already processing another request. Complete it before taking a new one."
+  },
+  "success": {
+    "request_sent": "Your request has been successfully submitted! We will notify you when it is reviewed.",
+    "category_created": "Category \"{{name}}\" with hashtag {{hashtag}} has been successfully created!",
+    "language_changed": "Language successfully changed!"
+  },
+  "statuses": {
+    "pending": "⏳ Under Review",
+    "approved": "👨‍💼 Awaiting Executor",
+    "declined": "❌ Declined",
+    "assigned": "🔄 In Progress",
+    "answered": "✅ Answer Under Review",
+    "closed": "✅ Closed"
+  },
+  "prompts": {
+    "select_category": "Select your question category:",
+    "enter_request": "Enter your legal question text (at least 150 characters):",
+    "confirm_request": "Check your request text:",
+    "select_faq_category": "Select FAQ category:",
+    "select_faq_question": "Select a question:",
+    "enter_answer": "Write your answer to this request and send it. Then click the \"Confirm Answer Submission\" button.",
+    "check_answer": "Check your answer:"
+  },
+  "language": {
+    "select": "Select language / Выберите язык / Tilni tanlang:",
+    "changed": "Language successfully changed to English!"
+  },
+  "lists": {
+    "my_requests_title": "📋 Your requests:",
+    "no_requests": "You don't have any requests yet.",
+    "request_date": "Date:",
+    "answer_label": "📝 Answer:",
+    "comment_label": "Comment:",
+    "select_action": "Select an action:"
+  },
+  "help": {
+    "user": "📚 **Legal Clinic Bot Usage Guide**\n\n**Main Functions:**\n\n🔸 **Ask a Question**\n   • Select the appropriate category for your legal question\n   • Describe your situation in detail (minimum 150 characters)\n   • Review the text and confirm submission\n   • Your question will be reviewed by an administrator\n\n🔸 **FAQ (Frequently Asked Questions)**\n   • Browse ready answers to popular questions\n   • Select a category and find a suitable question\n   • Your question might already have a ready answer\n\n🔸 **My Requests**\n   • Track the status of your requests\n   • View received answers\n   • Learn rejection reasons (if applicable)\n\n**📋 Request Statuses:**\n• ⏳ Under Review - your request is being checked by administrator\n• 👨‍💼 Awaiting Executor - request approved, looking for executor\n• 🔄 In Progress - student is working on the answer\n• ✅ Answer Under Review - answer ready, being checked by administrator\n• ✅ Closed - you received an answer to your question\n• ❌ Declined - request not accepted for review\n\n**📝 Question Requirements:**\n• Minimum 150 characters in request text\n• Clearly formulate your legal situation\n• Include all important details and circumstances\n• Select the appropriate law category\n\n**⏰ Processing Time:**\n• Admin review: usually within 1-2 days\n• Student answer preparation: 3-7 days\n• Admin answer review: 1-2 days\n\n**❓ If problems arise:**\n• Make sure your question contains sufficient details\n• Check that the correct category is selected\n• When rejected, carefully read the administrator's comment\n\n**⚠️ Important to remember:**\n- Consultations are informational in nature\n- Do not replace full legal assistance\n- For serious legal issues, contact a practicing lawyer",
+    "admin": "🔧 Administrator Help\n\nCategory Management:\n/add\\_category - Add new category\n/edit\\_category - Edit existing category\n/delete\\_category - Delete category\n/categories - Show all categories\n\nFAQ Management:\n/add\\_faq - Add new FAQ question\n/edit\\_faq - Edit existing FAQ question\n/delete\\_faq - Delete FAQ question\n/faqs - Show all FAQ by categories\n\nRequests and Statistics:\n/requests [page] - Show list of all requests (with pagination)\n/stats - Show bot statistics\n\nAdmin Rights:\n/getadmin - Get administrator rights (admin chat only)\n\nRequest Processing:\n• Incoming user requests appear with \"Approve\" and \"Decline\" buttons\n• When approved - request is sent to students\n• When declined - need to specify rejection reason\n• Student answers come with \"Confirm\" and \"Decline\" buttons\n• When confirmed - answer is sent to user\n• When declined - student can fix answer or reject assignment\n\n⚠️ Important Notes:\n- Category deletion only possible if not used in requests or FAQ\n- All actions are logged in the system\n- When declining, always provide clear reason for users/students",
+    "student": "👨‍🎓 Student Help\n\nHow to work with requests:\n\n1️⃣ Getting a request:\n   • Administrator-approved requests appear in this chat\n   • Click \"🔄 Take to work\" to accept the request\n   • ⚠️ Only one request can be processed simultaneously\n\n2️⃣ Working on request:\n   • After accepting, request details will come to your private messages\n   • Write your answer to the bot in private chat\n   • Review your answer and click \"Confirm Answer Submission\"\n\n3️⃣ Request actions:\n   • Confirm Answer Submission - send answer for administrator review\n   • Edit Answer - modify your answer\n   • Reject Assignment - return request to general queue\n\n4️⃣ After submitting answer:\n   • Administrator will review your answer\n   • If approved - answer goes to user, you're free for new request\n   • If declined - you'll get comment and can fix the answer\n\n📋 Request Statuses:\n• ⏳ Under Review - waiting for admin decision\n• 👨‍💼 Awaiting Executor - can be taken to work\n• 🔄 In Progress - being processed by student\n• ✅ Under Review - answer sent to admin\n• ✅ Closed - request completed\n• ❌ Declined - declined by admin\n\n⚠️ Important Rules:\n- Provide quality and detailed answers to legal questions\n- If unsure about answer - better reject the assignment\n- Follow professional ethics\n- One student = one active assignment"
+  }
+}
