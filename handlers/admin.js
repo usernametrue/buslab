@@ -1768,11 +1768,12 @@ const handleReopenRequest = async (ctx, bot) => {
 
     const previousStatus = request.status;
 
-    // Reset request
+// Reset request
     request.status = 'approved';
     request.studentId = null;
     request.answerText = null;
     request.adminComment = null;
+    request.assignedAt = null;
     await request.save();
 
     // Send to student chat

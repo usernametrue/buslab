@@ -21,6 +21,14 @@
     "edit_answer": "Edit Answer",
     "reject_assignment": "Reject Assignment"
   },
+  "onboarding": {
+    "offer_text": "Please review the [public offer agreement](https://teletype.in/@businesslaw/publicoffer_en).\n\nBy pressing «Accept», you agree to the terms of service.",
+    "accept": "✅ Accept",
+    "decline": "❌ Decline",
+    "offer_accepted": "✅ You have accepted the public offer agreement. Welcome!",
+    "offer_declined": "⚠️ You cannot use the bot without accepting the public offer agreement.\n\nPlease review the [public offer agreement](https://teletype.in/@businesslaw/publicoffer_en) and press «Accept» to continue.",
+    "offer_required": "⚠️ You must accept the public offer agreement to use the bot. Press /start"
+  },
   "errors": {
     "general": "An error occurred. Please try again later.",
     "admin_only": "This command is available only to administrators.",

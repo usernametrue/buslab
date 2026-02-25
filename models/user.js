@@ -25,6 +25,14 @@ const userSchema = new mongoose.Schema({
     enum: ['ru', 'uz', 'en', 'kk'],
     default: 'ru'
   },
+  isBanned: {
+    type: Boolean,
+    default: false
+  },
+  offerAccepted: {
+    type: Boolean,
+    default: false
+  },
   currentAssignmentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Request',

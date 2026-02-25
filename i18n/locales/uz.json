@@ -21,6 +21,14 @@
     "edit_answer": "Javobni o'zgartirish",
     "reject_assignment": "Murojaatdan voz kechish"
   },
+  "onboarding": {
+    "offer_text": "[Ommaviy oferta](https://teletype.in/@businesslaw/publicoffer_uz) bilan tanishib chiqing.\n\n«Qabul qilaman» tugmasini bosish orqali siz xizmat ko'rsatish shartlariga rozilik bildirasiz.",
+    "accept": "✅ Qabul qilaman",
+    "decline": "❌ Qabul qilmayman",
+    "offer_accepted": "✅ Siz ommaviy oferta shartlarini qabul qildingiz. Xush kelibsiz!",
+    "offer_declined": "⚠️ Ommaviy ofertani qabul qilmasdan botdan foydalana olmaysiz.\n\n[Ommaviy oferta](https://teletype.in/@businesslaw/publicoffer_uz) bilan tanishib, davom etish uchun «Qabul qilaman» tugmasini bosing.",
+    "offer_required": "⚠️ Botdan foydalanish uchun ommaviy ofertani qabul qilish kerak. /start bosing"
+  },
   "errors": {
     "general": "Xatolik yuz berdi. Iltimos, keyinroq qayta urinib ko'ring.",
     "admin_only": "Bu buyruq faqat administratorlar uchun mavjud.",

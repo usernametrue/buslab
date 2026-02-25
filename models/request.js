@@ -27,6 +27,10 @@ const requestSchema = new mongoose.Schema({
     ref: 'User',
     default: null
   },
+  assignedAt: {
+    type: Date,
+    default: null
+  },
   answerText: {
     type: String,
     default: null

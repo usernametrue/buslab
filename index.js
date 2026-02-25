@@ -120,12 +120,25 @@ bot.command('help', (ctx) => {
 const languageHandlers = require('./handlers/language');
 
 bot.command('language', languageHandlers.handleLanguageSelection);
-bot.action(/lang:(.+)/, languageHandlers.handleLanguageChange);
+bot.action(/^lang:(.+)$/, languageHandlers.handleLanguageChange);
+// Onboarding: language selection during first /start
+bot.action(/onboard_lang:(.+)/, languageHandlers.handleOnboardingLanguage);
+// Onboarding: offer accept/decline
+bot.action('offer:accept', languageHandlers.handleOfferAccept);
+bot.action('offer:decline', languageHandlers.handleOfferDecline);
 
 bot.on('message', async (ctx, next) => {
   try {
     // Skip if no text
     if (!ctx.message.text) return next();
+    if (ctx.chat.type === 'private' && !ctx.message.text.startsWith('/start')) {
+      const User = require('./models/user');
+      const offerUser = await User.findOne({ telegramId: ctx.from.id });
+      if (offerUser && !offerUser.offerAccepted) {
+        await ctx.reply(t(ctx, 'onboarding.offer_required'));
+        return;
+      }
+    }
 
     const messageText = ctx.message.text;
 
@@ -245,6 +258,7 @@ bot.on('message', async (ctx, next) => {
       }
     }
 
+    
     // === PRIORITY 3: MAIN MENU BUTTONS (Only if no active state) ===
 
     // Only process main menu buttons if user has no active state

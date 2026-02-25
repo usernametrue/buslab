@@ -66,9 +66,10 @@ const handleTakeRequest = async (ctx, bot) => {
       return;
     }
 
-    // Update request with student
+// Update request with student
     request.status = 'assigned';
     request.studentId = user._id;
+    request.assignedAt = new Date();
     await request.save();
 
     // Update user with active assignment
@@ -549,6 +550,7 @@ const handleRejectAssignment = async (ctx, bot) => {
     // Update request and user
     request.status = 'approved';
     request.studentId = null;
+    request.assignedAt = null;
     await request.save();
 
     user.currentAssignmentId = null;
