@@ -1,0 +1,98 @@
+# ================================
+# Frontend Dockerfile - Multi-stage
+# Node 24 Alpine + Nginx production
+# ================================
+
+# Stage 1: Build environment
+FROM node:24-alpine AS build
+
+# Install build dependencies
+RUN apk add --no-cache libc6-compat
+
+# Create app directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci && npm cache clean --force
+
+# Copy source code
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# ================================
+# Stage 2: Development
+FROM node:24-alpine AS development
+
+# Install dependencies
+RUN apk add --no-cache libc6-compat
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies (including dev)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Expose port
+EXPOSE 3000
+
+# Health check for dev server
+HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/ || exit 1
+
+# Development command
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+# ================================
+# Stage 3: Production with Nginx
+FROM nginx:1.25-alpine AS production
+
+# Install wget for health checks
+RUN apk add --no-cache wget
+
+# Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy built app from build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Create nginx user and set permissions
+RUN addgroup -g 101 -S nginx-group && \
+    adduser -S nginx-user -u 101 -G nginx-group && \
+    chown -R nginx-user:nginx-group /usr/share/nginx/html && \
+    chown -R nginx-user:nginx-group /var/cache/nginx && \
+    chown -R nginx-user:nginx-group /var/log/nginx && \
+    chown -R nginx-user:nginx-group /etc/nginx/conf.d
+
+# Create temp directories with proper permissions
+RUN mkdir -p /tmp/nginx/client_body && \
+    mkdir -p /tmp/nginx/proxy && \
+    mkdir -p /tmp/nginx/fastcgi && \
+    mkdir -p /tmp/nginx/uwsgi && \
+    mkdir -p /tmp/nginx/scgi && \
+    chown -R nginx-user:nginx-group /tmp/nginx
+
+# Switch to non-root user
+USER nginx-user
+
+# Expose port
+EXPOSE 80
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost/ || exit 1
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]

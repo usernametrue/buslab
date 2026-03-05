@@ -1,0 +1,72 @@
+# ================================
+# Backend Dockerfile - Multi-stage
+# Node 24 Alpine with production optimizations
+# ================================
+
+# Stage 1: Base dependencies and build tools
+FROM node:24-alpine AS dependencies
+
+# Install system dependencies for native modules
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    vips-dev \
+    libc6-compat
+
+# Create app directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies with npm ci for production builds
+RUN npm ci --only=production && npm cache clean --force
+
+# ================================
+# Stage 2: Development
+FROM dependencies AS development
+
+# Install dev dependencies
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node scripts/health-check.js || exit 1
+
+# Development command
+CMD ["npm", "run", "dev"]
+
+# ================================
+# Stage 3: Production build
+FROM dependencies AS production
+
+# Create non-root user for security
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S backend -u 1001
+
+# Copy source code
+COPY --chown=1001:1001 . .
+
+# Create necessary directories
+RUN mkdir -p uploads logs && \
+    chown -R 1001:1001 uploads logs
+
+# Switch to non-root user
+USER 1001
+
+# Expose port
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node scripts/health-check.js || exit 1
+
+# Production command
+CMD ["npm", "start"]

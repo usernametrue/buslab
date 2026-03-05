@@ -1,0 +1,311 @@
+{
+  "pageTitles": {
+    "/": "Home",
+    "/dashboard": "Dashboard",
+    "/templates": "Templates",
+    "/profile": "Profile",
+    "/history": "File history",
+    "/processing": "Processing file",
+    "/results": "Processing results",
+    "/coming-soon": "Coming soon"
+  },
+  "pageDescriptions": {
+    "/": "Powerful platform for automating Excel calculations according to IFRS. With ATABAI, financial reporting will be tens of times cheaper and faster.",
+    "/dashboard": "ATABAI Dashboard - manage files, IFRS templates and monitor the processing of financial documents.",
+    "/templates": "IFRS templates for automating depreciation calculations, discounts, asset impairment and financial reports.",
+    "/profile": "ATABAI user profile settings - manage subscription, preferences and personal data.",
+    "/history": "File processing history in ATABAI - view results, download processed documents and statistics.",
+    "/processing": "Processing Excel files according to IFRS standards - applying automation formulas and generating reports.",
+    "/results": "ATABAI file processing results - compare changes, detailed reports and export ready documents.",
+    "/coming-soon": "ATABAI will be available soon. The Excel calculation automation platform for IFRS is under development."
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "templates": "Templates",
+    "profile": "Profile",
+    "history": "File History",
+    "logout": "Sign Out",
+    "features": "Features",
+    "howItWorks": "How It Works",
+    "pricing": "Pricing",
+    "language": "Language"
+  },
+  "hero": {
+    "title": "Powerful platform for automating Excel calculations according to IFRS",
+    "subtitle": "With ATABAI, financial reporting will be tens of times cheaper and faster",
+    "tryFree": "Try for free",
+    "loginGoogle": "Sign in with Google"
+  },
+  "stats": {
+    "seconds": "sec.",
+    "minute": "min.",
+    "analysisTime": "Analysis time",
+    "accuracy": "Calculation accuracy",
+    "availability": "Available",
+    "timeSaving": "Time savings"
+  },
+  "howItWorks": {
+    "title": "How it works",
+    "step1": {
+      "title": "Upload Excel files",
+      "description": "Upload your financial Excel files for processing according to IFRS requirements",
+      "uploadText": "Drag files here or click to select",
+      "supportedFormats": "Supported formats: .xlsx, .xls, .csv"
+    },
+    "step2": {
+      "title": "Select IFRS template",
+      "description": "Choose the appropriate calculation template in accordance with IFRS"
+    },
+    "step3": {
+      "title": "Get ready results",
+      "description": "Download processed files with applied IFRS formulas and detailed change reports",
+      "processed": "File processed",
+      "changes": "Changes",
+      "formulas": "Formulas applied"
+    },
+    "step4": {
+      "title": "4. See the transformation",
+      "description": "Watch how your local format transforms into international IFRS standards",
+      "before": "Before (NSBU Format)",
+      "after": "After (IFRS Format)",
+      "transformation": "Transformation",
+      "compliant": "IFRS Compliant",
+      "keyChanges": "✨ Key Transformations Applied:",
+      "changes": {
+        "depreciation": "IAS 16 depreciation methods",
+        "discounts": "IFRS 15 revenue recognition",
+        "impairment": "IAS 36 impairment testing",
+        "translation": "English translations",
+        "standards": "Standard references"
+      },
+      "spreadsheet": {
+        "depreciation": {
+          "before": {
+            "headers": {
+              "code": "Account Code",
+              "item": "Item Name",
+              "amount": "Amount"
+            },
+            "data": {
+              "ppe": "Property, Plant & Equipment",
+              "depreciation": "PPE Depreciation",
+              "manual": "Manual calculation",
+              "calculation": "Manual calculation",
+              "error": "Error prone"
+            }
+          },
+          "after": {
+            "headers": {
+              "assets": "Assets",
+              "standard": "Standard",
+              "amount": "Amount"
+            },
+            "data": {
+              "ppe": "Property, plant and equipment",
+              "accumulated": "Accumulated depreciation",
+              "automated": "Automated",
+              "compliant": "IAS 16 compliant",
+              "accurate": "✓ Accurate"
+            }
+          }
+        },
+        "discounts": {
+          "before": {
+            "headers": {
+              "code": "Code",
+              "revenue": "Revenue",
+              "amount": "Amount"
+            },
+            "data": {
+              "sales": "Sales revenue",
+              "returns": "Returns and discounts",
+              "simple": "Simple",
+              "basic": "Basic discounts",
+              "nonifrs": "Non-IFRS"
+            }
+          },
+          "after": {
+            "headers": {
+              "revenue": "Revenue",
+              "standard": "Standard",
+              "amount": "Amount"
+            },
+            "data": {
+              "contracts": "Revenue from contracts",
+              "liabilities": "Contract liabilities",
+              "performance": "Performance obligations",
+              "method": "IFRS 15 method",
+              "compliant": "✓ Compliant"
+            }
+          }
+        },
+        "impairment": {
+          "before": {
+            "headers": {
+              "asset": "Asset",
+              "carrying": "Carrying Amount",
+              "status": "Status"
+            },
+            "data": {
+              "equipment": "Equipment",
+              "buildings": "Buildings",
+              "untested": "Not tested",
+              "notesting": "No testing",
+              "noias36": "No IAS 36 tests",
+              "risk": "Risk"
+            }
+          },
+          "after": {
+            "headers": {
+              "asset": "Asset",
+              "carrying": "Carrying Amount",
+              "status": "Status"
+            },
+            "data": {
+              "equipment": "Equipment (CGU 1)",
+              "buildings": "Buildings (CGU 2)",
+              "impaired": "Impaired",
+              "noimpairment": "No impairment",
+              "tested": "IAS 36 tested",
+              "recoverable": "Recoverable amount",
+              "validated": "✓ Validated"
+            }
+          }
+        }
+      }
+    },
+    "templates": {
+      "depreciation": {
+        "processed": "Asset schedules processed",
+        "changesLabel": "Depreciation entries",
+        "changes": "156",
+        "formulasLabel": "Asset calculations",
+        "formulas": "42"
+      },
+      "discounts": {
+        "processed": "Revenue analyzed",
+        "changesLabel": "Discount adjustments",
+        "changes": "293",
+        "formulasLabel": "Revenue formulas",
+        "formulas": "67"
+      },
+      "impairment": {
+        "processed": "Impairment tests completed",
+        "changesLabel": "Value adjustments",
+        "changes": "84",
+        "formulasLabel": "Impairment calculations",
+        "formulas": "28"
+      }
+    }
+  },
+  "features": {
+    "title": "Why ATABAI is great",
+    "automation": {
+      "title": "Complete Automation",
+      "description": "Automatic application of IFRS formulas to your Excel files"
+    },
+    "compliance": {
+      "title": "IFRS Compliance",
+      "description": "Compliance with international financial reporting standards"
+    },
+    "accuracy": {
+      "title": "High Accuracy",
+      "description": "Minimizing errors in financial calculations"
+    },
+    "speed": {
+      "title": "Fast Processing",
+      "description": "Processing large files in minutes"
+    },
+    "easy": {
+      "title": "Easy to Use",
+      "description": "Intuitive interface requires no special training"
+    },
+    "universal": {
+      "title": "Universal",
+      "description": "Suitable for any type of calculation and report"
+    }
+  },
+  "templates": {
+    "depreciation": "Fixed Asset Depreciation",
+    "discounts": "Discount Calculations",
+    "impairment": "Asset Impairment",
+    "reports": "Financial Reports"
+  },
+  "pricing": {
+    "title": "ATABAI helps you save time and money",
+    "popular": "Popular",
+    "getStarted": "Get Started",
+    "contactUs": "Contact Us",
+    "basic": {
+      "title": "Basic",
+      "price": "Free",
+      "files": "5 files per month",
+      "templates": "Basic IFRS templates",
+      "history": "Last 10 files history",
+      "export": "Export processed files"
+    },
+    "premium": {
+      "title": "Premium",
+      "price": "On request",
+      "perMonth": "Custom pricing",
+      "files": "Unlimited files",
+      "templates": "All IFRS templates",
+      "priority": "Priority processing",
+      "history": "Complete processing history",
+      "support": "Technical support",
+      "api": "API access"
+    },
+    "enterprise": {
+      "title": "Enterprise",
+      "price": "Custom",
+      "custom": "Customize to your needs",
+      "dedicated": "Dedicated server",
+      "sla": "SLA agreement",
+      "training": "Team training"
+    }
+  },
+  "cta": {
+    "title": "Try now for free",
+    "subtitle": "For any of your tasks and see the effectiveness of ATABAI",
+    "button": "Try now"
+  },
+  "finalCta": {
+    "title": "Ready to start?",
+    "subtitle": "Start automating your IFRS calculations today",
+    "button": "Get Started"
+  },
+  "comingSoon": {
+    "pageTitle": "Coming Soon",
+    "title": "Launching Soon!",
+    "description": "We're working hard to create the best platform for IFRS calculation automation. Our team is finalizing all features to provide you with an exceptional experience.",
+    "featuresTitle": "What's coming:",
+    "feature1": "Automated depreciation and impairment calculations",
+    "feature2": "Full compliance with IFRS standards",
+    "feature3": "Intuitive interface and fast processing",
+    "feature4": "Detailed reports and result exports",
+    "contactTitle": "Have questions?",
+    "contactDescription": "Contact us for more information or to be notified about the launch.",
+    "telegram": "Telegram",
+    "email": "Email",
+    "instagram": "Instagram",
+    "backToHome": "Back to home"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signOut": "Sign Out",
+    "signInWithGoogle": "Sign in with Google"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "upload": "Upload",
+    "download": "Download",
+    "process": "Process"
+  }
+}
